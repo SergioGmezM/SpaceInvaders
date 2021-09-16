@@ -44,6 +44,7 @@ public class Player : MonoBehaviour
     {
         GameObject bullet = Instantiate(bulletPrefab, shootPoint.position, Quaternion.identity);
     }
+
     IEnumerator ShootCD()
     {
         yield return new WaitForSeconds(shootCD);
