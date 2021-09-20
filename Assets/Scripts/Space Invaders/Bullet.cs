@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] float speed = 10f;
-    int time = 0;
+    private GameManager gameManager;
+
+    [SerializeField] private float speed = 10f;
 
     private void Start()
     {
-        StartCoroutine("DeathTime");
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
     }
 
     private void Update()
@@ -17,13 +18,18 @@ public class Bullet : MonoBehaviour
         transform.Translate(transform.up * speed * Time.deltaTime);
     }
 
-    IEnumerator DeathTime()
+    private void OnTriggerEnter(Collider other)
     {
-        while(time < 5)
+        if (other.gameObject.CompareTag("Enemy"))
         {
-            yield return new WaitForSeconds(1);
-            time++;
+            gameManager.AddScore(1);
+            gameObject.SetActive(false);
+            // Desactivar/Destruir enemigo
         }
-        gameObject.SetActive(false);
+
+        if (other.gameObject.CompareTag("OutOfScene"))
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

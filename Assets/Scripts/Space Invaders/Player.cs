@@ -5,27 +5,26 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
-    Rigidbody rb;
-    [SerializeField] float speed = 10f;
+    [SerializeField] private float speed = 10f;
 
-    Vector3 horMove;
+    private Vector3 playerMove;
+    private float maxRangeX = 26.0f;
+    private float maxRangeY = 12.0f;
 
-    bool canShoot = true;
+    [SerializeField] private List<GameObject> playerBulletList;
+    private bool canShoot = true;
     public float shootCD = .5f;
 
-    [SerializeField] GameObject bulletPrefab;
-    [SerializeField] Transform shootPoint;
-
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private Transform shootPoint;
 
     private void Update()
     {
+        ConstrainPlayerMovement();
+
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-        horMove = new Vector3(horizontal, vertical, 0f).normalized;
+        transform.Translate(new Vector3(horizontal, vertical, 0f).normalized * speed * Time.deltaTime);
 
         if (canShoot && Input.GetMouseButton(0))
         {
@@ -35,14 +34,50 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    private void ConstrainPlayerMovement()
     {
-        rb.MovePosition(transform.position + horMove * speed * Time.fixedDeltaTime);
+        if (transform.position.x > maxRangeX)
+        {
+            transform.position = new Vector3(maxRangeX, transform.position.y, transform.position.z);
+        }
+        else if (transform.position.x < -maxRangeX)
+        {
+            transform.position = new Vector3(-maxRangeX, transform.position.y, transform.position.z);
+        }
+
+        if (transform.position.y > maxRangeY)
+        {
+            transform.position = new Vector3(transform.position.x, maxRangeY, transform.position.z);
+        }
+        else if (transform.position.y < -maxRangeY)
+        {
+            transform.position = new Vector3(transform.position.x, -maxRangeY, transform.position.z);
+        }
     }
 
     void Shoot()
     {
-        GameObject bullet = Instantiate(bulletPrefab, shootPoint.position, Quaternion.identity);
+        bool bulletFound = false;
+
+        // Busca la primera bala de la lista que no esté activada
+        foreach(GameObject playerBullet in playerBulletList)
+        {
+            if (!playerBullet.activeSelf)
+            {
+                playerBullet.transform.position = shootPoint.position;
+                playerBullet.SetActive(true);
+                bulletFound = true;
+                break;
+            }
+        }
+
+        // Si no hay balas desactivadas, añade una nueva
+        if (!bulletFound)
+        {
+            GameObject playerBullet = Instantiate(bulletPrefab, shootPoint.position, Quaternion.identity);
+            playerBullet.SetActive(false);
+            playerBulletList.Add(playerBullet);
+        }
     }
 
     IEnumerator ShootCD()
