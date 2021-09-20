@@ -12,34 +12,36 @@ public class MarcianosManager : MonoBehaviour
     GameObject[] marcianitos;
     [SerializeField] Transform marcianitosDad;
     [SerializeField] float moveTime = 1f;
+    int wayPointIndex = 0;
 
     private void Start()
     {
         waypoints = new Transform[waypointDad.childCount];
+        marcianitos = new GameObject[marcianitosDad.childCount];
         for (int i = 0; i < waypoints.Length; i++)
         {
             waypoints[i] = waypointDad.GetChild(i);
         }
 
-        marcianitos = new GameObject[marcianitosDad.childCount];
         for (int i = 0; i < marcianitos.Length; i++)
         {
             marcianitos[i] = marcianitosDad.GetChild(i).gameObject;
         }
-        StartCoroutine("MoveMarcianitos");
+        StartCoroutine("MoverPollos");
     }
 
-    IEnumerator MoveMarcianitos()
+
+    IEnumerator MoverPollos()
     {
-        while (true) // importante que el while acabe cuando no haya marcianitos
+        while (wayPointIndex < (waypoints.Length - marcianitos.Length))
         {
-            for (int i = 0; i < waypoints.Length; i++)
+            for (int i = 0; i < marcianitos.Length; i++)
             {
-                marcianitos[i].transform.position = waypoints[i].position;
+                marcianitos[i].transform.position = waypoints[wayPointIndex + i].position;
             }
 
+            wayPointIndex++;
             yield return new WaitForSeconds(moveTime);
-            moveTime -= .01f;
         }
     }
 }
