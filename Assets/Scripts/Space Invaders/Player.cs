@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Transform shootPoint;
+    [SerializeField] private Transform playerBulletListParent;
 
     private void Update()
     {
@@ -77,6 +78,7 @@ public class Player : MonoBehaviour
             GameObject playerBullet = Instantiate(bulletPrefab, shootPoint.position, Quaternion.identity);
             playerBullet.SetActive(false);
             playerBulletList.Add(playerBullet);
+            playerBullet.transform.parent = playerBulletListParent;
         }
     }
 
