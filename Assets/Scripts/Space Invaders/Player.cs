@@ -63,7 +63,7 @@ public class Player : MonoBehaviour
         // Busca la primera bala de la lista que no esté activada
         foreach(GameObject playerBullet in playerBulletList)
         {
-            if (!playerBullet.activeSelf)
+            if (!playerBullet.activeInHierarchy)
             {
                 playerBullet.transform.position = shootPoint.position;
                 playerBullet.SetActive(true);

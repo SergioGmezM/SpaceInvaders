@@ -8,7 +8,7 @@ public class Bullet : MonoBehaviour
 
     [SerializeField] private float speed = 10f;
 
-    private void Start()
+    private void Awake()
     {
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
     }
@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour
         {
             gameManager.AddScore(1);
             gameObject.SetActive(false);
-            // Desactivar/Destruir enemigo
+            other.gameObject.SetActive(false);
         }
 
         if (other.gameObject.CompareTag("OutOfScene"))
