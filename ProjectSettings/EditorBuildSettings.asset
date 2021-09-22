@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Space Invaders.unity
+    guid: efb7790e78e4fc646b8e3277f298db1d
   m_configObjects: {}

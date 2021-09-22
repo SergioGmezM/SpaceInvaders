@@ -10,6 +10,12 @@ public class ChickenBullet : MonoBehaviour
     [SerializeField] private float speed = 20f;
     [SerializeField] private float minDistance = 10.0f;
     [SerializeField] private Vector3 direction;
+    bool choosenDirection;
+
+    // variable de control de tiempo
+    float timeLived;
+    [SerializeField] private float timeToDie = 1.5f;
+
 
     private void Awake()
     {
@@ -17,20 +23,27 @@ public class ChickenBullet : MonoBehaviour
         playerTransform = GameObject.Find("Player").GetComponent<Transform>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        direction = playerTransform.position - transform.position;
+        timeLived = 0;
+        choosenDirection = false;
     }
 
     private void Update()
     {
-        if (Vector3.Distance(playerTransform.position, transform.position) > minDistance)
+        if (!choosenDirection)
         {
             direction = playerTransform.position - transform.position;
+            choosenDirection = true;
         }
-        
+
         transform.Translate(direction.normalized * speed * Time.deltaTime);
         // Poner un timer de que a los 3 segundos se destruya la bala
+        timeLived += Time.deltaTime;
+        if (timeLived > timeToDie || gameManager.gameOver) 
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private void OnTriggerEnter(Collider other)

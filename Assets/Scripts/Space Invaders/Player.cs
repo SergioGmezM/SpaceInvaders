@@ -7,12 +7,11 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float speed = 10f;
 
-    private Vector3 playerMove;
     private float maxRangeX = 26.0f;
     private float maxRangeY = 12.0f;
 
     [SerializeField] private List<GameObject> playerBulletList;
-    private bool canShoot = true;
+    public bool canShoot = true;
     public float shootCD = .5f;
 
     [SerializeField] private GameObject bulletPrefab;

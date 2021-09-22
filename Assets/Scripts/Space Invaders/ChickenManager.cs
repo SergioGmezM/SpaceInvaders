@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChickenManager: MonoBehaviour
+public class ChickenManager : MonoBehaviour
 {
     private GameManager gameManager;
 
@@ -50,7 +50,7 @@ public class ChickenManager: MonoBehaviour
 
     private void Start()
     {
-        InvokeRepeating(nameof(ChickenAttack), chickenAttackRate, chickenAttackRate);
+        StartCoroutine("ChickenAttack");
     }
 
     private void Update()
@@ -62,7 +62,7 @@ public class ChickenManager: MonoBehaviour
         Vector3 leftEdgePos = leftEdge.position;
         Vector3 rightEdgePos = rightEdge.position;
 
-        foreach(Transform chicken in transform)
+        foreach (Transform chicken in transform)
         {
             // Si el pollo está desactivado, continúa al siguiente
             if (!chicken.gameObject.activeInHierarchy)
@@ -74,7 +74,8 @@ public class ChickenManager: MonoBehaviour
             if (moveDirection == Vector3.right && chicken.position.x >= (rightEdgePos.x - padding))
             {
                 AdvanceRow();
-            } else if (moveDirection == Vector3.left && chicken.position.x <= (leftEdgePos.x + padding))
+            }
+            else if (moveDirection == Vector3.left && chicken.position.x <= (leftEdgePos.x + padding))
             {
                 AdvanceRow();
             }
@@ -90,45 +91,54 @@ public class ChickenManager: MonoBehaviour
         transform.position = position;
     }
 
-    private void ChickenAttack()
+    private IEnumerator ChickenAttack()
     {
-        foreach (Transform chicken in transform)
+        while (gameManager.gameOver == false)
         {
-            // Si el pollo está desactivado, continúa al siguiente
-            if (!chicken.gameObject.activeInHierarchy)
+            yield return new WaitForSeconds(chickenAttackRate);
+            foreach (Transform chicken in transform)
             {
-                continue;
-            }
-
-            // Dada una probabilidad de disparo
-            if (Random.value < ((float) (gameManager.GetScore() / 100.0f) + 0.3f))
-            {
-                bool bulletFound = false;
-
-                // Busca la primera bala de la lista que no esté activada
-                foreach (GameObject chickenBullet in chickenBulletList)
+                // Si el pollo está desactivado, continúa al siguiente
+                if (!chicken.gameObject.activeInHierarchy)
                 {
-                    if (!chickenBullet.activeInHierarchy)
+                    continue;
+                }
+
+                // Dada una probabilidad de disparo
+                if (Random.value < ((float)(gameManager.GetScore() / transform.childCount) + 0.3f))
+                {
+                    bool bulletFound = false;
+
+                    // Busca la primera bala de la lista que no esté activada
+                    foreach (GameObject chickenBullet in chickenBulletList)
                     {
-                        chickenBullet.transform.position = chicken.position;
-                        chickenBullet.SetActive(true);
-                        bulletFound = true;
+                        if (!chickenBullet.activeInHierarchy)
+                        {
+                            chickenBullet.transform.position = chicken.position;
+                            chickenBullet.SetActive(true);
+                            bulletFound = true;
+                            break;
+                        }
+                    }
+
+                    // Si no hay balas desactivadas, añade una nueva
+                    if (!bulletFound)
+                    {
+                        GameObject chickenBullet = Instantiate(chickenBulletPrefab, chicken.position, Quaternion.identity);
+                        chickenBullet.SetActive(false);
+                        chickenBulletList.Add(chickenBullet);
+                        chickenBullet.transform.parent = chickenBulletListParent;
+                    }
+                    else
+                    {
                         break;
                     }
                 }
+            }
 
-                // Si no hay balas desactivadas, añade una nueva
-                if (!bulletFound)
-                {
-                    GameObject chickenBullet = Instantiate(chickenBulletPrefab, chicken.position, Quaternion.identity);
-                    chickenBullet.SetActive(false);
-                    chickenBulletList.Add(chickenBullet);
-                    chickenBullet.transform.parent = chickenBulletListParent;
-                }
-                else
-                {
-                    break;
-                }
+            if (chickenAttackRate >= .5f)
+            {
+                chickenAttackRate -= (float)gameManager.GetScore() / transform.childCount / 10;
             }
         }
     }
