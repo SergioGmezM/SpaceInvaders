@@ -19,4 +19,4 @@ public class Chicken : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
-    }
+}

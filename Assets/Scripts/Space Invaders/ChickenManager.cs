@@ -96,6 +96,7 @@ public class ChickenManager : MonoBehaviour
         while (gameManager.gameOver == false)
         {
             yield return new WaitForSeconds(chickenAttackRate);
+
             foreach (Transform chicken in transform)
             {
                 // Si el pollo está desactivado, continúa al siguiente
@@ -138,7 +139,7 @@ public class ChickenManager : MonoBehaviour
 
             if (chickenAttackRate >= .5f)
             {
-                chickenAttackRate -= (float)gameManager.GetScore() / transform.childCount / 10;
+                chickenAttackRate -= chickenAttackRate * ((float)gameManager.GetScore() / (transform.childCount * 10));
             }
         }
     }
