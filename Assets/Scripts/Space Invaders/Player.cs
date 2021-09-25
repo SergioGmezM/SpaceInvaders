@@ -5,33 +5,50 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f;
+    private GameManager gameManager;
 
+    // Variables para el movimiento del jugador
+    [SerializeField] private float speed = 10f;
     private float maxRangeX = 26.0f;
     private float maxRangeY = 12.0f;
 
-    [SerializeField] private List<GameObject> playerBulletList;
+    // Variables para el disparo del jugador
     public bool canShoot = true;
     public float shootCD = .5f;
 
-    [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private Transform shootPoint;
-    [SerializeField] private Transform playerBulletListParent;
+    // Variables para las balas del jugador
+    public List<GameObject> playerBulletList;
+    public GameObject bulletPrefab;
+    public Transform shootPoint;
+    public Transform playerBulletListParent;
+
+    private void Awake()
+    {
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+    }
 
     private void Update()
     {
         ConstrainPlayerMovement();
 
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-        transform.Translate(new Vector3(horizontal, vertical, 0f).normalized * speed * Time.deltaTime);
+        if (!gameManager.gameOver)
+        {
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
+            transform.Translate(new Vector3(horizontal, vertical, 0f).normalized * speed * Time.deltaTime);
 
-        if (canShoot && Input.GetMouseButton(0))
+            if (canShoot && Input.GetMouseButton(0))
+            {
+                canShoot = false;
+                Shoot();
+                StartCoroutine("ShootCD");
+            }
+        } else
         {
             canShoot = false;
-            Shoot();
-            StartCoroutine("ShootCD");
+            StopCoroutine("ShootCD");
         }
+            
     }
 
     private void ConstrainPlayerMovement()
@@ -83,6 +100,11 @@ public class Player : MonoBehaviour
 
     IEnumerator ShootCD()
     {
+        if (gameManager.gameOver)
+        {
+            yield break;
+        }
+
         yield return new WaitForSeconds(shootCD);
         canShoot = true;
     }

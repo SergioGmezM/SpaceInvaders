@@ -5,16 +5,16 @@ using UnityEngine;
 public class ChickenBullet : MonoBehaviour
 {
     private GameManager gameManager;
-    private Transform playerTransform;
 
-    [SerializeField] private float speed = 20f;
-    [SerializeField] private float minDistance = 10.0f;
+    // Variables para el movimiento de la bala
+    private Transform playerTransform;
+    [SerializeField] private float speed = 13.0f;
     [SerializeField] private Vector3 direction;
-    bool choosenDirection;
+    [SerializeField] private float playerMinDistance = 0.2f;
 
     // variable de control de tiempo
-    float timeLived;
-    [SerializeField] private float timeToDie = 1.5f;
+    [SerializeField] private float timeLived;
+    [SerializeField] private float timeToDie = 2f;
 
 
     private void Awake()
@@ -26,37 +26,23 @@ public class ChickenBullet : MonoBehaviour
     private void OnEnable()
     {
         timeLived = 0;
-        choosenDirection = false;
+        direction = playerTransform.position - transform.position;
     }
 
     private void Update()
     {
-        if (!choosenDirection)
-        {
-            direction = playerTransform.position - transform.position;
-            choosenDirection = true;
-        }
-
         transform.Translate(direction.normalized * speed * Time.deltaTime);
-        // Poner un timer de que a los 3 segundos se destruya la bala
+
         timeLived += Time.deltaTime;
-        if (timeLived > timeToDie || gameManager.gameOver) 
+        if (timeLived > timeToDie || gameManager.gameOver)
         {
             gameObject.SetActive(false);
         }
-    }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Player"))
+        if (Vector3.Distance(transform.position, playerTransform.position) <= playerMinDistance)
         {
+            gameObject.SetActive(false);
             gameManager.RemoveHealth(1);
-            gameObject.SetActive(false);
-        }
-
-        if (other.gameObject.CompareTag("OutOfScene"))
-        {
-            gameObject.SetActive(false);
         }
     }
 }

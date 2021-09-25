@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Chicken : MonoBehaviour
 {
-    GameManager gameManager;
+    private GameManager gameManager;
 
     private void Start()
     {

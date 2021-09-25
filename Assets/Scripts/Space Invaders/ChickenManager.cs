@@ -7,9 +7,7 @@ public class ChickenManager : MonoBehaviour
     private GameManager gameManager;
 
     // Variables para la matriz de pollos
-    [SerializeField] private GameObject chickenPrefab;
-    [SerializeField] private int rows = 5;
-    [SerializeField] private int columns = 11;
+    public GameObject chickenPrefab;
 
     // Variables para el movimiento de los pollos
     public float chickenSpeed = 2.0f;
@@ -19,14 +17,18 @@ public class ChickenManager : MonoBehaviour
     public Transform leftEdge;
 
     // Variables para el ataque de los pollos
-    [SerializeField] private GameObject chickenBulletPrefab;
-    [SerializeField] private List<GameObject> chickenBulletList;
-    [SerializeField] private Transform chickenBulletListParent;
+    public GameObject chickenBulletPrefab;
+    public List<GameObject> chickenBulletList;
+    public Transform chickenBulletListParent;
     [SerializeField] private float chickenAttackRate;
+    [SerializeField] private float minShootingProbability = 0.3f;
+    [SerializeField] private float chickenMissileProbability = 0.3f;
 
     private void Awake()
     {
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        int rows = gameManager.chickenRows;
+        int columns = gameManager.chickenColumns;
 
         // Se instancia una matriz de pollos
         for (int row = 0; row < rows; row++)
@@ -55,30 +57,36 @@ public class ChickenManager : MonoBehaviour
 
     private void Update()
     {
-        // Movemos el bloque de pollos en la dirección actual
-        transform.position += moveDirection * chickenSpeed * Time.deltaTime;
-
-        // Obtenemos los bordes de la pantalla (modificable por otros bordes que queramos poner nosotros)
-        Vector3 leftEdgePos = leftEdge.position;
-        Vector3 rightEdgePos = rightEdge.position;
-
-        foreach (Transform chicken in transform)
+        if (!gameManager.gameOver)
         {
-            // Si el pollo está desactivado, continúa al siguiente
-            if (!chicken.gameObject.activeInHierarchy)
-            {
-                continue;
-            }
+            // Movemos el bloque de pollos en la dirección actual
+            transform.position += moveDirection * chickenSpeed * Time.deltaTime;
 
-            // Si el bloque de pollos choca con los bordes de la pantalla, los pollos cambian de dirección
-            if (moveDirection == Vector3.right && chicken.position.x >= (rightEdgePos.x - padding))
+            // Obtenemos los bordes de la pantalla (modificable por otros bordes que queramos poner nosotros)
+            Vector3 leftEdgePos = leftEdge.position;
+            Vector3 rightEdgePos = rightEdge.position;
+
+            foreach (Transform chicken in transform)
             {
-                AdvanceRow();
+                // Si el pollo está desactivado, continúa al siguiente
+                if (!chicken.gameObject.activeInHierarchy)
+                {
+                    continue;
+                }
+
+                // Si el bloque de pollos choca con los bordes de la pantalla, los pollos cambian de dirección
+                if (moveDirection == Vector3.right && chicken.position.x >= (rightEdgePos.x - padding))
+                {
+                    AdvanceRow();
+                }
+                else if (moveDirection == Vector3.left && chicken.position.x <= (leftEdgePos.x + padding))
+                {
+                    AdvanceRow();
+                }
             }
-            else if (moveDirection == Vector3.left && chicken.position.x <= (leftEdgePos.x + padding))
-            {
-                AdvanceRow();
-            }
+        } else
+        {
+            StopCoroutine("ChickenAttack");
         }
     }
 
@@ -93,7 +101,12 @@ public class ChickenManager : MonoBehaviour
 
     private IEnumerator ChickenAttack()
     {
-        while (gameManager.gameOver == false)
+        if (gameManager.gameOver)
+        {
+            yield break;
+        }
+
+        while (!gameManager.gameOver)
         {
             yield return new WaitForSeconds(chickenAttackRate);
 
@@ -106,7 +119,7 @@ public class ChickenManager : MonoBehaviour
                 }
 
                 // Dada una probabilidad de disparo
-                if (Random.value < ((float)(gameManager.GetScore() / transform.childCount) + 0.3f))
+                if (Random.value < ((float)(gameManager.GetScore() / transform.childCount) + minShootingProbability))
                 {
                     bool bulletFound = false;
 
@@ -116,6 +129,18 @@ public class ChickenManager : MonoBehaviour
                         if (!chickenBullet.activeInHierarchy)
                         {
                             chickenBullet.transform.position = chicken.position;
+
+                            // Dada una probabilidad, el proyectil será una bala o un misil
+                            if (Random.value < chickenMissileProbability)
+                            {
+                                chickenBullet.GetComponent<ChickenBullet>().enabled = false;
+                                chickenBullet.GetComponent<ChickenMissile>().enabled = true;
+                            } else
+                            {
+                                chickenBullet.GetComponent<ChickenBullet>().enabled = true;
+                                chickenBullet.GetComponent<ChickenMissile>().enabled = false;
+                            }
+
                             chickenBullet.SetActive(true);
                             bulletFound = true;
                             break;

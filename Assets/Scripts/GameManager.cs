@@ -6,36 +6,42 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    // Variables de dificultad del juego
     [SerializeField] private int score = 0;
     [SerializeField] private int playerHealth = 5;
-    [SerializeField] Text scoreText;
-    [SerializeField] Text healthText;
-    [SerializeField] Text victoryText;
-    [SerializeField] GameObject restartButton;
+    public int chickenRows = 5;
+    public int chickenColumns = 11;
+
+    // Variables de interfaz
+    public Text scoreText;
+    public Text healthText;
+    public Text victoryText;
+    public Text gameOverText;
+    public Button restartButton;
+
+    // Variable de fin del juego
     public bool gameOver = false;
-    Player player;
 
 
     private void Start()
     {
-        player = FindObjectOfType<Player>();
-        scoreText.text = "Puntuacion: " + score.ToString();
-        healthText.text = "Vida: " + playerHealth.ToString();
-        victoryText.text = "";
-        restartButton.SetActive(false);
+        scoreText.text = "Puntuación: " + score.ToString();
+        healthText.text = "Vidas: " + playerHealth.ToString();
+        victoryText.gameObject.SetActive(false);
+        gameOverText.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
     }
 
     public void AddScore(int points)
     {
         score += points;
-        // Mostrar en una interfaz
-        scoreText.text = "Puntuacion: " + score.ToString();
-        if (score >= 55)  // añadir && !gameOver numero de pollos, si puede ser que se modifique se puede buscar el chickenmanager y hacer la referencia
+
+        scoreText.text = "Puntuación: " + score.ToString();
+        if (score >= (chickenRows * chickenColumns) && !gameOver)
         {
-            player.canShoot = false;
-            victoryText.text = "Victoria!!!";
+            victoryText.gameObject.SetActive(true);
             gameOver = true;
-            Invoke("RestartGame", 2f);
+            restartButton.gameObject.SetActive(true);
         }
     }
 
@@ -47,15 +53,14 @@ public class GameManager : MonoBehaviour
     public void RemoveHealth(int points)
     {
         playerHealth -= points;
-        // Mostrar en una interfaz
-        healthText.text = "Vida: " + playerHealth.ToString();
-        if (playerHealth <= 0) // añadir && !gameOver
+
+        healthText.text = "Vidas: " + playerHealth.ToString();
+        if (playerHealth <= 0 && !gameOver)
         {
-            player.canShoot = false;
             playerHealth = 0;
             gameOver = true;
-            victoryText.text = "Derrota...";
-            Invoke("RestartGame", 2f);
+            gameOverText.gameObject.SetActive(true);
+            restartButton.gameObject.SetActive(true);
         }
     }
 
@@ -64,13 +69,13 @@ public class GameManager : MonoBehaviour
         return playerHealth;
     }
 
-    public void RestartGame()
-    {
-        restartButton.SetActive(true);
-    }
-
     public void RestartButton()
     {
         SceneManager.LoadScene("Space Invaders");
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

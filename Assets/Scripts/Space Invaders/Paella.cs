@@ -4,17 +4,22 @@ using UnityEngine;
 
 public class Paella : MonoBehaviour
 {
-
-    [SerializeField] int vida = 5;
+    [SerializeField] private int health = 5;
 
     private void OnTriggerEnter(Collider other)
     {
-        vida--;
-        other.gameObject.SetActive(false);
-        if (vida <= 0)
+        if (other.gameObject.CompareTag("EnemyBullet"))
         {
-            gameObject.SetActive(false);
+            health--;
+            other.gameObject.SetActive(false);
+
+            if (health <= 0)
+            {
+                gameObject.SetActive(false);
+            }
+        } else if (other.gameObject.CompareTag("PlayerBullet"))
+        {
+            other.gameObject.SetActive(false);
         }
     }
-
 }
