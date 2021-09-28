@@ -19,9 +19,12 @@ public class GameManager : MonoBehaviour
     public Text gameOverText;
     public Button restartButton;
     public Button quitButton;
+    public Button pauseButton;
+    public Button resumeButton;
 
-    // Variable de fin del juego
+    // Variables de control del juego
     public bool gameOver = false;
+    //public bool gamePaused = false;
 
 
     private void Start()
@@ -32,6 +35,8 @@ public class GameManager : MonoBehaviour
         gameOverText.gameObject.SetActive(false);
         restartButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
+        pauseButton.gameObject.SetActive(true);
+        resumeButton.gameObject.SetActive(false);
     }
 
     public void AddScore(int points)
@@ -41,8 +46,9 @@ public class GameManager : MonoBehaviour
         scoreText.text = "Puntuación: " + score.ToString();
         if (score >= (chickenRows * chickenColumns) && !gameOver)
         {
-            victoryText.gameObject.SetActive(true);
             gameOver = true;
+            pauseButton.gameObject.SetActive(false);
+            victoryText.gameObject.SetActive(true);
             restartButton.gameObject.SetActive(true);
             quitButton.gameObject.SetActive(true);
         }
@@ -62,6 +68,7 @@ public class GameManager : MonoBehaviour
         {
             playerHealth = 0;
             gameOver = true;
+            pauseButton.gameObject.SetActive(false);
             gameOverText.gameObject.SetActive(true);
             restartButton.gameObject.SetActive(true);
             quitButton.gameObject.SetActive(true);
@@ -71,6 +78,22 @@ public class GameManager : MonoBehaviour
     public int GetPlayerHealth()
     {
         return playerHealth;
+    }
+
+    public void PauseGame()
+    {
+        pauseButton.gameObject.SetActive(false);
+        resumeButton.gameObject.SetActive(true);
+        quitButton.gameObject.SetActive(true);
+        Time.timeScale = 0;
+    }
+
+    public void ResumeGame()
+    {
+        pauseButton.gameObject.SetActive(true);
+        resumeButton.gameObject.SetActive(false);
+        quitButton.gameObject.SetActive(false);
+        Time.timeScale = 1;
     }
 
     public void RestartButton()
