@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public Text victoryText;
     public Text gameOverText;
     public Button restartButton;
+    public Button quitButton;
 
     // Variable de fin del juego
     public bool gameOver = false;
@@ -30,6 +31,7 @@ public class GameManager : MonoBehaviour
         victoryText.gameObject.SetActive(false);
         gameOverText.gameObject.SetActive(false);
         restartButton.gameObject.SetActive(false);
+        quitButton.gameObject.SetActive(false);
     }
 
     public void AddScore(int points)
@@ -42,6 +44,7 @@ public class GameManager : MonoBehaviour
             victoryText.gameObject.SetActive(true);
             gameOver = true;
             restartButton.gameObject.SetActive(true);
+            quitButton.gameObject.SetActive(true);
         }
     }
 
@@ -61,6 +64,7 @@ public class GameManager : MonoBehaviour
             gameOver = true;
             gameOverText.gameObject.SetActive(true);
             restartButton.gameObject.SetActive(true);
+            quitButton.gameObject.SetActive(true);
         }
     }
 
