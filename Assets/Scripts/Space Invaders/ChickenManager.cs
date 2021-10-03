@@ -7,7 +7,7 @@ public class ChickenManager : MonoBehaviour
     private GameManager gameManager;
 
     // Variables para la matriz de pollos
-    public GameObject chickenPrefab;
+    public GameObject[] chickenPrefabs;
 
     // Variables para el movimiento de los pollos
     public float chickenSpeed = 2.0f;
@@ -23,9 +23,11 @@ public class ChickenManager : MonoBehaviour
     [SerializeField] private float chickenAttackRate;
     [SerializeField] private float minShootingProbability = 0.3f;
     [SerializeField] private float chickenMissileProbability = 0.3f;
+    private int chickenCount;
 
     private void Awake()
     {
+        chickenCount = 0; // para contar los pollos de cada tipo
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         int rows = gameManager.chickenRows;
         int columns = gameManager.chickenColumns;
@@ -41,8 +43,23 @@ public class ChickenManager : MonoBehaviour
 
             for (int col = 0; col < columns; col++)
             {
+                chickenCount++;  // numero de pollos instanciados
+                int chickenNum;
                 // Se calcula la posición en la columna en la que se va a instanciar
-                GameObject chicken = Instantiate(chickenPrefab, transform);
+                if (chickenCount <= 33)
+                {
+                    chickenNum = 0;
+                }
+                else if (chickenCount <= 48 || chickenCount > 51)
+                {
+                    chickenNum = 1;
+                }
+                else
+                {
+                    chickenNum = 2;
+                }
+
+                GameObject chicken = Instantiate(chickenPrefabs[chickenNum], transform);
                 Vector3 position = rowPosition;
                 position.x += col * 2.0f;
                 chicken.transform.localPosition = position;

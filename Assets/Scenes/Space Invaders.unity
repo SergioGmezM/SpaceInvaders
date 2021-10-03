@@ -5682,8 +5682,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7112096677e53340a52235c77f4469b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chickenPrefab: {fileID: 7691588851893081529, guid: 7288ac8d0d1fc8549b3045ccbe253525,
-    type: 3}
+  chickenPrefabs:
+  - {fileID: 7691588851893081529, guid: 7288ac8d0d1fc8549b3045ccbe253525, type: 3}
+  - {fileID: 7691588851893081529, guid: d093ef3c9fed30540a9b87affaf6071f, type: 3}
+  - {fileID: 7691588851893081529, guid: 269248b5daabce549a7a8c159c6d53a9, type: 3}
   chickenSpeed: 2
   moveDirection: {x: 1, y: 0, z: 0}
   padding: 2
