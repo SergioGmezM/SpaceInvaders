@@ -6,36 +6,23 @@ using UnityEngine.UI;
 
 public class MenuScript : MonoBehaviour
 {
-
+    [SerializeField] private Canvas puntuacionCanvas;
     [SerializeField] private Canvas instructionsCanvas;
     [SerializeField] private Canvas menuCanvas;
     [SerializeField] private Canvas minijuegosCanvas;
+    [SerializeField] private Text maxScoreText;
 
     bool minijuegosCanvasActive = false;
 
+    private void Start()
+    {
+        maxScoreText.text = "Maxima Puntuación: " + PlayerPrefs.GetInt("Max Score");
+    }
+
     public void OnPlayButton()
     {
-        menuCanvas.gameObject.SetActive(false);
-        minijuegosCanvas.gameObject.SetActive(true);
-        minijuegosCanvasActive = true;
-    }
-
-    public void OnMinijuego1Button()
-    {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Minijuego 1");
-    }
-
-    public void OnMinijuego2Button()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("Minijuego2");
-    }
-
-    public void OnExplorationButton()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("Classroom");
+        SceneManager.LoadScene("Space Invaders");
     }
 
     public void OnInstructionsButton()
@@ -48,12 +35,19 @@ public class MenuScript : MonoBehaviour
     {
         menuCanvas.gameObject.SetActive(true);
         instructionsCanvas.gameObject.SetActive(false);
+        puntuacionCanvas.gameObject.SetActive(false);
         if (minijuegosCanvasActive == true)
         {
             minijuegosCanvas.gameObject.SetActive(false);
             minijuegosCanvasActive = false;
         }
         
+    }
+
+    public void OnPuntuationButton()
+    {
+        menuCanvas.gameObject.SetActive(false);
+        puntuacionCanvas.gameObject.SetActive(true);
     }
 
     public void Salir()  // poner en evento de boton de salir

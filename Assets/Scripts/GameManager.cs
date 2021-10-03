@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     // Variables de dificultad del juego
     [SerializeField] private int score = 0;
+    private int maxScore;
     [SerializeField] private int playerHealth = 5;
     public int chickenRows = 5;
     public int chickenColumns = 11;
@@ -54,6 +55,11 @@ public class GameManager : MonoBehaviour
     public void AddScore(int points)
     {
         score += points;
+        if (score > maxScore)
+        {
+            maxScore = score;
+            PlayerPrefs.SetInt("Max Score", maxScore);
+        }
 
         scoreText.text = "Puntuación: " + score.ToString();
         if (score >= (chickenRows * chickenColumns) && !gameOver)
@@ -130,6 +136,6 @@ public class GameManager : MonoBehaviour
 
     public void QuitGame()
     {
-        Application.Quit();
+        SceneManager.LoadScene("Menu");
     }
 }
