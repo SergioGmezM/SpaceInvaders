@@ -20,17 +20,32 @@ public class ChickenManager : MonoBehaviour
     public GameObject chickenBulletPrefab;
     public List<GameObject> chickenBulletList;
     public Transform chickenBulletListParent;
+    public GameObject chickenMissilePrefab;
+    public List<GameObject> chickenMissileList;
+    public Transform chickenMissileListParent;
     [SerializeField] private float chickenAttackRate;
     [SerializeField] private float minShootingProbability = 0.3f;
     [SerializeField] private float chickenMissileProbability = 0.3f;
-    private int chickenCount;
 
     private void Awake()
     {
-        chickenCount = 0; // para contar los pollos de cada tipo
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         int rows = gameManager.chickenRows;
         int columns = gameManager.chickenColumns;
+
+        // Se calculan variables para saber dónde posicionar a los pollos chef
+        // y a los pollos termómetro
+        float a, b;
+        a = Mathf.Round((float)columns / 3.0f);
+        b = a;
+        if (columns % 3 == 1)
+        {
+            b = a + 1;
+        }
+        else if (columns % 3 == 2)
+        {
+            b = a - 1;
+        }
 
         // Se instancia una matriz de pollos
         for (int row = 0; row < rows; row++)
@@ -43,23 +58,18 @@ public class ChickenManager : MonoBehaviour
 
             for (int col = 0; col < columns; col++)
             {
-                chickenCount++;  // numero de pollos instanciados
-                int chickenNum;
-                // Se calcula la posición en la columna en la que se va a instanciar
-                if (chickenCount <= 33)
+                int prefabIndex = 0;
+
+                if (row == (rows - 1) && ((col >= a) && (col < (a + b))))
                 {
-                    chickenNum = 0;
+                    prefabIndex = 1;
                 }
-                else if (chickenCount <= 48 || chickenCount > 51)
+                else if (row >= (rows - 2))
                 {
-                    chickenNum = 1;
-                }
-                else
-                {
-                    chickenNum = 2;
+                    prefabIndex = 2;
                 }
 
-                GameObject chicken = Instantiate(chickenPrefabs[chickenNum], transform);
+                GameObject chicken = Instantiate(chickenPrefabs[prefabIndex], transform);
                 Vector3 position = rowPosition;
                 position.x += col * 2.0f;
                 chicken.transform.localPosition = position;
@@ -138,39 +148,46 @@ public class ChickenManager : MonoBehaviour
                 // Dada una probabilidad de disparo
                 if (Random.value < ((float)(gameManager.GetScore() / transform.childCount) + minShootingProbability))
                 {
-                    bool bulletFound = false;
+                    bool projectileFound = false;
+                    string projectile = "bullet";
+                    List<GameObject> projectileList = chickenBulletList;
+
+                    // Dada una probabilidad, el proyectil será una bala o un misil
+                    if (Random.value < chickenMissileProbability)
+                    {
+                        projectileList = chickenMissileList;
+                        projectile = "missile";
+                    }
 
                     // Busca la primera bala de la lista que no esté activada
-                    foreach (GameObject chickenBullet in chickenBulletList)
+                    foreach (GameObject chickenProjectile in projectileList)
                     {
-                        if (!chickenBullet.activeInHierarchy)
+                        if (!chickenProjectile.activeInHierarchy)
                         {
-                            chickenBullet.transform.position = chicken.position;
+                            chickenProjectile.transform.position = chicken.position;
 
-                            // Dada una probabilidad, el proyectil será una bala o un misil
-                            if (Random.value < chickenMissileProbability)
-                            {
-                                chickenBullet.GetComponent<ChickenBullet>().enabled = false;
-                                chickenBullet.GetComponent<ChickenMissile>().enabled = true;
-                            } else
-                            {
-                                chickenBullet.GetComponent<ChickenBullet>().enabled = true;
-                                chickenBullet.GetComponent<ChickenMissile>().enabled = false;
-                            }
-
-                            chickenBullet.SetActive(true);
-                            bulletFound = true;
+                            chickenProjectile.SetActive(true);
+                            projectileFound = true;
                             break;
                         }
                     }
 
                     // Si no hay balas desactivadas, añade una nueva
-                    if (!bulletFound)
+                    if (!projectileFound)
                     {
-                        GameObject chickenBullet = Instantiate(chickenBulletPrefab, chicken.position, Quaternion.identity);
-                        chickenBullet.SetActive(false);
-                        chickenBulletList.Add(chickenBullet);
-                        chickenBullet.transform.parent = chickenBulletListParent;
+                        if (projectile == "bullet")
+                        {
+                            GameObject chickenBullet = Instantiate(chickenBulletPrefab, chicken.position, Quaternion.identity);
+                            chickenBullet.SetActive(false);
+                            chickenBulletList.Add(chickenBullet);
+                            chickenBullet.transform.parent = chickenBulletListParent;
+                        } else if (projectile == "missile")
+                        {
+                            GameObject chickenMissile = Instantiate(chickenMissilePrefab, chicken.position, Quaternion.identity);
+                            chickenMissile.SetActive(false);
+                            chickenMissileList.Add(chickenMissile);
+                            chickenMissile.transform.parent = chickenMissileListParent;
+                        }
                     }
                     else
                     {

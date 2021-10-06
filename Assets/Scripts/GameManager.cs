@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour
 {
     // Variables de dificultad del juego
     [SerializeField] private int score = 0;
-    private int maxScore;
     [SerializeField] private int playerHealth = 5;
     public int chickenRows = 5;
     public int chickenColumns = 11;
@@ -20,26 +19,23 @@ public class GameManager : MonoBehaviour
     public Text gameOverText;
     public Button restartButton;
     public Button quitButton;
-  //  public Button pauseButton;
     public Button resumeButton;
-    public Canvas pauseCanvas; // dani
+    public Canvas pauseCanvas;
 
     // Variables de control del juego
     public bool gameOver = false;
-    //public bool gamePaused = false;
-    public bool paused = false; // dani
+    public bool paused = false;
 
 
     private void Start()
     {
-        pauseCanvas.gameObject.SetActive(false); // dani
+        pauseCanvas.gameObject.SetActive(false);
         scoreText.text = "Puntuación: " + score.ToString();
         healthText.text = "Vidas: " + playerHealth.ToString();
         victoryText.gameObject.SetActive(false);
         gameOverText.gameObject.SetActive(false);
         restartButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
-      //  pauseButton.gameObject.SetActive(true);
         resumeButton.gameObject.SetActive(false);
     }
 
@@ -55,17 +51,15 @@ public class GameManager : MonoBehaviour
     public void AddScore(int points)
     {
         score += points;
-        if (score > maxScore)
+        if (score > PlayerPrefs.GetInt("Max Score"))
         {
-            maxScore = score;
-            PlayerPrefs.SetInt("Max Score", maxScore);
+            PlayerPrefs.SetInt("Max Score", score);
         }
 
         scoreText.text = "Puntuación: " + score.ToString();
         if (score >= (chickenRows * chickenColumns) && !gameOver)
         {
             gameOver = true;
-         //   pauseButton.gameObject.SetActive(false);
             victoryText.gameObject.SetActive(true);
             restartButton.gameObject.SetActive(true);
             quitButton.gameObject.SetActive(true);
@@ -86,7 +80,6 @@ public class GameManager : MonoBehaviour
         {
             playerHealth = 0;
             gameOver = true;
-       //     pauseButton.gameObject.SetActive(false);
             gameOverText.gameObject.SetActive(true);
             restartButton.gameObject.SetActive(true);
             quitButton.gameObject.SetActive(true);
@@ -98,7 +91,7 @@ public class GameManager : MonoBehaviour
         return playerHealth;
     }
 
-    public void PauseMenu() // dani
+    public void PauseMenu()
     {
         if (paused)
         {
@@ -113,7 +106,6 @@ public class GameManager : MonoBehaviour
     public void PauseGame()
     {
         pauseCanvas.gameObject.SetActive(true);
-        //      pauseButton.gameObject.SetActive(false);
         resumeButton.gameObject.SetActive(true);
         quitButton.gameObject.SetActive(true);
         Time.timeScale = 0;
@@ -122,7 +114,6 @@ public class GameManager : MonoBehaviour
     public void ResumeGame()
     {
         paused = false;
-      //  pauseButton.gameObject.SetActive(true);
         resumeButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
         pauseCanvas.gameObject.SetActive(false);

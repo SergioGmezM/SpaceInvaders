@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2792574707619741954}
   - component: {fileID: 4517895262459531417}
   - component: {fileID: 3366954194262590666}
-  - component: {fileID: 4421894823671817728}
   - component: {fileID: 6778607395692865982}
   - component: {fileID: 8599938504607830875}
   m_Layer: 0
@@ -21,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &531402699479861412
 Transform:
   m_ObjectHideFlags: 0
@@ -91,7 +90,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3931398278877461566}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b74265ebfcc82248b46ff6e78f6af84, type: 3}
   m_Name: 
@@ -101,25 +100,6 @@ MonoBehaviour:
   playerMinDistance: 0.2
   timeLived: 0
   timeToDie: 3
---- !u!114 &4421894823671817728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3931398278877461566}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f26d934fcae8814a99a9acd1bfd4843, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  steeringSpeed: 0.6
-  speed: 13
-  direction: {x: 0, y: 0, z: 0}
-  oldDirection: {x: 0, y: 0, z: 0}
-  playerMinDistance: 0.5
-  timeLived: 0
-  timeToDie: 2
 --- !u!135 &6778607395692865982
 SphereCollider:
   m_ObjectHideFlags: 0

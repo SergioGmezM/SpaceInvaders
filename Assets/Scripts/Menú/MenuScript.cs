@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class MenuScript : MonoBehaviour
 {
-    [SerializeField] private Canvas puntuacionCanvas;
-    [SerializeField] private Canvas instructionsCanvas;
-    [SerializeField] private Canvas menuCanvas;
-    [SerializeField] private Canvas minijuegosCanvas;
-    [SerializeField] private Text maxScoreText;
+    public Canvas puntuacionCanvas;
+    public Canvas instructionsCanvas;
+    public Canvas menuCanvas;
+    public Canvas minijuegosCanvas;
+    public Text maxScoreText;
 
     bool minijuegosCanvasActive = false;
 
