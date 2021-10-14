@@ -22,8 +22,11 @@ public class Player : MonoBehaviour
     public Transform shootPoint;
     public Transform playerBulletListParent;
 
+    public Animator anim;
+
     private void Awake()
     {
+        anim = GetComponentInChildren<Animator>();
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
     }
 
@@ -75,7 +78,7 @@ public class Player : MonoBehaviour
     void Shoot()
     {
         bool bulletFound = false;
-
+        anim.Play("ketchupAnim 0");
         // Busca la primera bala de la lista que no esté activada
         foreach(GameObject playerBullet in playerBulletList)
         {

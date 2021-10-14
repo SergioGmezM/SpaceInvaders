@@ -11,9 +11,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int playerHealth = 5;
     public int chickenRows = 5;
     public int chickenColumns = 11;
+    private int totalChickens;
 
     // Variables de interfaz
     public Text scoreText;
+    public Text badGuysText;
     public Text healthText;
     public Text victoryText;
     public Text gameOverText;
@@ -30,13 +32,15 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         pauseCanvas.gameObject.SetActive(false);
-        scoreText.text = "Puntuación: " + score.ToString();
-        healthText.text = "Vidas: " + playerHealth.ToString();
+        scoreText.text = score.ToString();
+        healthText.text = playerHealth.ToString();
         victoryText.gameObject.SetActive(false);
         gameOverText.gameObject.SetActive(false);
         restartButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
         resumeButton.gameObject.SetActive(false);
+        totalChickens = chickenRows * chickenColumns;
+        badGuysText.text = totalChickens.ToString();
     }
 
     private void Update()
@@ -51,12 +55,13 @@ public class GameManager : MonoBehaviour
     public void AddScore(int points)
     {
         score += points;
+        totalChickens--;
         if (score > PlayerPrefs.GetInt("Max Score"))
         {
             PlayerPrefs.SetInt("Max Score", score);
         }
-
-        scoreText.text = "Puntuación: " + score.ToString();
+        badGuysText.text = totalChickens.ToString();
+        scoreText.text = score.ToString();
         if (score >= (chickenRows * chickenColumns) && !gameOver)
         {
             gameOver = true;
@@ -75,7 +80,7 @@ public class GameManager : MonoBehaviour
     {
         playerHealth -= points;
 
-        healthText.text = "Vidas: " + playerHealth.ToString();
+        healthText.text = playerHealth.ToString();
         if (playerHealth <= 0 && !gameOver)
         {
             playerHealth = 0;
